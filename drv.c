@@ -67,7 +67,6 @@ extern const struct backend backend_virtio_gpu;
 static const struct backend *drv_get_backend(int fd)
 {
 	drmVersionPtr drm_version;
-	unsigned int i;
 
 	drm_version = drmGetVersion(fd);
 
@@ -75,53 +74,10 @@ static const struct backend *drv_get_backend(int fd)
 		return NULL;
 
 	const struct backend *backend_list[] = {
-#ifdef DRV_AMDGPU
-		&backend_amdgpu,
-#endif
-		&backend_evdi,
-#ifdef DRV_EXYNOS
-		&backend_exynos,
-#endif
-#ifdef DRV_I915
-		&backend_i915,
-#endif
-#ifdef DRV_MARVELL
-		&backend_marvell,
-#endif
-#ifdef DRV_MEDIATEK
-		&backend_mediatek,
-#endif
-#ifdef DRV_MESON
-		&backend_meson,
-#endif
-#ifdef DRV_MSM
-		&backend_msm,
-#endif
-		&backend_nouveau,
-#ifdef DRV_RADEON
-		&backend_radeon,
-#endif
-#ifdef DRV_ROCKCHIP
-		&backend_rockchip,
-#endif
-#ifdef DRV_TEGRA
-		&backend_tegra,
-#endif
-		&backend_udl,
-#ifdef DRV_VC4
-		&backend_vc4,
-#endif
-		&backend_vgem,     &backend_virtio_gpu,
+		&backend_evdi
 	};
 
-	for (i = 0; i < ARRAY_SIZE(backend_list); i++)
-		if (!strcmp(drm_version->name, backend_list[i]->name)) {
-			drmFreeVersion(drm_version);
-			return backend_list[i];
-		}
-
-	drmFreeVersion(drm_version);
-	return NULL;
+        return backend_list[0];
 }
 
 struct driver *drv_create(int fd)

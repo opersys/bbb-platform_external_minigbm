@@ -37,39 +37,23 @@ int32_t cros_gralloc_driver::init()
 
 	int fd;
 	drmVersionPtr version;
-	char const *str = "%s/renderD%d";
-	const char *undesired[2] = { "vgem", nullptr };
-	uint32_t num_nodes = 63;
-	uint32_t min_node = 128;
-	uint32_t max_node = (min_node + num_nodes);
 
-	for (uint32_t i = 0; i < ARRAY_SIZE(undesired); i++) {
-		for (uint32_t j = min_node; j < max_node; j++) {
-			char *node;
-			if (asprintf(&node, str, DRM_DIR_NAME, j) < 0)
-				continue;
+        const char *str = "%s/card0";
+        char *node;
 
-			fd = open(node, O_RDWR, 0);
-			free(node);
+        asprintf(&node, str, DRM_DIR_NAME);
 
-			if (fd < 0)
-				continue;
+        fd = open(node, O_RDWR, 0);
+        free(node);
 
-			version = drmGetVersion(fd);
-			if (!version)
-				continue;
+        if (fd < 0) return -ENODEV;
 
-			if (undesired[i] && !strcmp(version->name, undesired[i])) {
-				drmFreeVersion(version);
-				continue;
-			}
+        version = drmGetVersion(fd);
+        if (!version) return -ENODEV;
 
-			drmFreeVersion(version);
-			drv_ = drv_create(fd);
-			if (drv_)
-				return 0;
-		}
-	}
+        drmFreeVersion(version);
+        drv_ = drv_create(fd);
+        if (drv_) return 0;
 
 	return -ENODEV;
 }

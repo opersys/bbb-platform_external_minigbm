@@ -19,7 +19,7 @@ static int evdi_init(struct driver *drv)
 }
 
 const struct backend backend_evdi = {
-	.name = "evdi",
+	.name = "vkms",
 	.init = evdi_init,
 	.bo_create = drv_dumb_bo_create,
 	.bo_destroy = drv_dumb_bo_destroy,
